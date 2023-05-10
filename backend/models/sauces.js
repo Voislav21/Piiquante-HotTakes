@@ -13,7 +13,9 @@ const sauceSchema = mongoose.Schema({
     imageUrl: { type: String, require: true },
     heat: { type: Number, require: true },
     likes: { type: Number, default: 0 },
-    dislikes: { type: Number, default: 0 }
+    dislikes: { type: Number, default: 0 },
+    usersLiked: { type: Array, default: []},
+    usersDisliked: { type: Array, default: [] }
 });
 
 // Create model, call model function, name the function Sauce //

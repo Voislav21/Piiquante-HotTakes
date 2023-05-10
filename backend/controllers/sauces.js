@@ -18,7 +18,9 @@ exports.createSauce = (req, res, next) => {
         imageUrl: url + '/images/' + req.file.filename,
         heat: req.body.sauce.heat,
         likes: req.body.sauce.likes,
-        dislikes: req.body.sauce.dislikes
+        dislikes: req.body.sauce.dislikes,
+        usersLiked: req.body.sauce.usersLiked,
+        usersDisliked: req.body.sauce.usersDisliked
     });
     sauce.save()
     .then(() => {
@@ -57,7 +59,9 @@ exports.modifySauce = (req, res, next) => {
             imageUrl: url + '/images/' + req.file.filename,
             heat: req.body.sauce.heat,
             likes: req.body.sauce.likes,
-            dislikes: req.body.sauce.dislikes
+            dislikes: req.body.sauce.dislikes,
+            usersLiked: req.body.sauce.usersLiked,
+            usersDisliked: req.body.sauce.usersDisliked
         };
     } else {
         sauce = {
@@ -69,7 +73,9 @@ exports.modifySauce = (req, res, next) => {
             imageUrl: req.body.imageUrl,
             heat: req.body.heat,
             likes: req.body.likes,
-            dislikes: req.body.dislikes
+            dislikes: req.body.dislikes,
+            usersLiked: req.body.usersLiked,
+            usersDisliked: req.body.usersDisliked
         };
     }
         Sauce.updateOne({ _id: req.params.id }, sauce)
