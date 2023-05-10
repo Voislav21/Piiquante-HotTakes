@@ -5,6 +5,7 @@
 // Import express and mongoose //
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -17,6 +18,18 @@ mongoose.connect('mongodb+srv://voislav21:bC6a2n2mSy3NGYqv@cluster0.b6e5igi.mong
         console.log('Unable to connect to mongoDB Atlas!');
         console.error(error);
     });
+
+app.use(express.json());
+
+// Avoid CORS errors by allowing access //
+app.use((req,res,next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
+});
+
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   console.log('Request received!');
