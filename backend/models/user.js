@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
 });
 
 // Call it as a plug-in //
-userSchema.pluging(uniqueValidator);
+userSchema.plugin(uniqueValidator);
 
 // Create model, call model function, name the function 'User' //
 module.exports = mongoose.model('User', userSchema);
