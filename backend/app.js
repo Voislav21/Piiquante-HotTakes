@@ -7,6 +7,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+// Import the routes //
+const userRoutes = require('./routes/user');
+
 const app = express();
 
 // Connect to database //
@@ -31,23 +34,7 @@ app.use((req,res,next) => {
 
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  console.log('Request received!');
-  next();
-});
-
-app.use((req, res, next) => {
-  res.status(201);
-  next();
-});
-
-app.use((req, res, next) => {
-  res.json({ message: 'Your request was successful!' });
-  next();
-});
-
-app.use((req, res, next) => {
-  console.log('Response sent successfully!');
-});
+// Register the routers within express app, where the requests and response are sent and received //
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
