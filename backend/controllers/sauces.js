@@ -1,7 +1,6 @@
 // Sauces related bussiness mogic //
 
 // Import sauce model //
-const { deserialize } = require('v8');
 const Sauce = require('../models/sauces');
 // Node file system package //
 const fs = require('fs');
