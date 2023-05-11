@@ -7,20 +7,18 @@ const fs = require('fs');
 
 // Create function //
 exports.createSauce = (req, res, next) => {
+    // Get the requests protocol and host name //
     const url = req.protocol + '://' + req.get('host');
-    req.body.sauce = JSON.parse(req.body.sauce);
+    // Create a sauceObject from the request body //
+    const sauceObject = JSON.parse(req.body.sauce);
+    // Create a new Sauce object //
     const sauce = new Sauce({
-        userId: req.body.sauce.userId,
-        manufacturer: req.body.sauce.manufacturer,
-        description: req.body.sauce.description,
-        mainPepper: req.body.sauce.mainPepper,
+        // Use the spread operator to pass an object inside of another object //
+        ...sauceObject,
         imageUrl: url + '/images/' + req.file.filename,
-        heat: req.body.sauce.heat,
-        likes: req.body.sauce.likes,
-        dislikes: req.body.sauce.dislikes,
-        usersLiked: req.body.sauce.usersLiked,
-        usersDisliked: req.body.sauce.usersDisliked
     });
+    console.log(sauce);
+    // Save the sauce //
     sauce.save()
     .then(() => {
         res.status(201).json({
@@ -44,51 +42,6 @@ exports.getOneSauce = (req, res, next) => {
     });
 };
 
-exports.modifySauce = (req, res, next) => {
-    let sauce = new Sauce({ _id: req.params._id });
-    if (req.file) {
-        const url = req.protocol + '://' + req.get('host');
-        req.body.sauce = JSON.parse(req.body.sauce);
-        sauce = {
-            _id: req.params.id,
-            userId: req.body.sauce.userId,
-            manufacturer: req.body.sauce.manufacturer,
-            description: req.body.sauce.description,
-            mainPepper: req.body.sauce.mainPepper,
-            imageUrl: url + '/images/' + req.file.filename,
-            heat: req.body.sauce.heat,
-            likes: req.body.sauce.likes,
-            dislikes: req.body.sauce.dislikes,
-            usersLiked: req.body.sauce.usersLiked,
-            usersDisliked: req.body.sauce.usersDisliked
-        };
-    } else {
-        sauce = {
-            _id: req.params.id,
-            userId: req.body.userId,
-            manufacturer: req.body.manufacturer,
-            description: req.body.description,
-            mainPepper: req.body.mainPepper,
-            imageUrl: req.body.imageUrl,
-            heat: req.body.heat,
-            likes: req.body.likes,
-            dislikes: req.body.dislikes,
-            usersLiked: req.body.usersLiked,
-            usersDisliked: req.body.usersDisliked
-        };
-    }
-        Sauce.updateOne({ _id: req.params.id }, sauce)
-        .then(() => {
-            res.status(201).json({
-                message: 'Sauce updated successfully!'
-            });
-        }).catch((error) => {
-            res.status(400).json({
-                error: error
-            });
-        });
-};
-
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
@@ -104,6 +57,30 @@ exports.deleteSauce = (req, res, next) => {
                     error: error
                 });
             });
+        });
+    });
+};
+
+exports.modifySauce = (req, res, next) => {
+    let sauce = new Sauce({ _id: req.params._id });
+    if (req.file) {
+        const url = req.protocol + '://' + req.get('host');
+        const sauceObject = JSON.parse(req.body.sauce);
+        sauce = {
+            ...sauceObject,
+            imageUrl: url + '/images/' + req.file.filename
+        };
+    } else {
+        sauce = req.body;
+    }
+    Sauce.updateOne({ _id: req.params.id }, sauce)
+    .then(() => {
+        res.status(201).json({
+            message: 'Sauce updated successfully!'
+        });
+    }).catch((error) => {
+        res.status(400).json({
+            error: error
         });
     });
 };
