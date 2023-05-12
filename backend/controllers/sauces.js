@@ -1,4 +1,4 @@
-// Sauces related bussiness mogic //
+// Sauces related bussiness logic //
 
 // Import sauce model //
 const Sauce = require('../models/sauces');
