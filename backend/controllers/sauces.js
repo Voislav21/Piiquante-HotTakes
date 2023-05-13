@@ -122,3 +122,89 @@ exports.getAllSauces = (req, res, next) => {
         });
     });
 };
+
+// Like or dislike sauce //
+exports.likesOrDislikes = (req, res, next) => {
+    // Store userId and sauceId //
+    const userId = req.body.userId;
+    const sauceId = req.params.id;
+    if (req.body.like === 1) {
+        // Action to be taken if a user likes a sauce //
+        const updateLike = {
+            // Increment the value of likes by 1 //
+            $inc: { likes: req.body.like },
+            // Push the userId into the usersLiked array //
+            $push: { usersLiked: userId }
+        };
+        // Update the sauce //
+        Sauce.updateOne({ _id: sauceId }, updateLike)
+        .then(() => {
+            res.status(200).json({ message: 'Your like is greatly appreciated!'});
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error});
+        });
+    } else if (req.body.like === -1) {
+        // Action to be taken if user dislikes a sauce //
+        const updatDislike = {
+            // Increment the value of dislikes by -1 //
+            $inc: { dislikes: req.body.like },
+            // Push the userId into the usersDisliked array //
+            $push: { usersDisliked: userId }
+        };
+        // Update the sauce //
+        Sauce.updateOne({ _id: sauceId }, updatDislike)
+        .then(() => {
+            res.status(200).json({ message: 'You duna likea my sauce?'});
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error});
+        });
+    } else if (req.body.like === 0) {
+        // Action to be taken if user changes thier mind //
+        const changeLike = {
+            // Increments the value of likes by -1 //
+            $inc: { likes: -1 },
+            // Pull the userId from the array //
+            $pull: { usersLiked: userId }
+        };
+        const changeDislike = {
+            // Increments the value of dislikes by 1 //
+            $inc: { dislikes: +1 },
+            // Pull the userId from the array //
+            $pull: { usersDisliked: userId }
+        };
+        Sauce.findOne({ _id: sauceId })
+        // Find the sauce to pass it as an argument in the promise //
+        .then((sauce) => {
+            // If the userId is included in the array the user can unclick their like //
+            if (sauce.usersLiked.includes(userId)) {
+                // Update the sauce //
+                Sauce.updateOne({ _id: sauceId }, changeLike)
+                .then(() => {
+                    res.status(200).json({ message: 'You like has been removed' });
+                })
+                .catch((error) => {
+                    res.status(500).json({ error: error });
+                });
+                // If the userId is included in the array the user can unclick their dislike //
+            } else if (sauce.usersDisliked.includes(userId)) {
+                // Update the sauce //
+                Sauce.updateOne({ _id: sauceId }, changeDislike)
+                .then(() => {
+                    res.status(200).json({ message: 'Your dislike has been removed' });
+                })
+                .catch((error) => {
+                    res.status(500).json({ error: error });
+                });
+            } else {
+                res.status(400).json({ error: 'Invalid like value!' });
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error });
+        });
+    } else {
+        res.status(400).json({ error: 'Invalid like value!' });
+    }
+};
