@@ -21,13 +21,9 @@ exports.signup = (req, res, next) => {
         // Save this to the database //
         user.save()
         .then(() => {
-            res.status(201).json({
-                message: 'User added successfully!'
-            });
+            res.status(201).json({ message: 'User added successfully!' });
         }).catch((error) => {
-            res.status(401).json({
-                error: error
-            });
+            res.status(401).json({ error: error });
         });
     });
 };
@@ -70,14 +66,12 @@ exports.login = (req, res, next) => {
                 userId: user._id,
                 token: token
             });
-        }).catch((error) => {
-            res.status(500).json({
-                error: error
-            });
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error });
         });
-    }).catch((error) => {
-        res.status(500).json({
-            error: error
-        });
+    })
+    .catch((error) => {
+        res.status(500).json({ error: error });
     });
 };
