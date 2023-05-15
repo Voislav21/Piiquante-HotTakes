@@ -20,13 +20,10 @@ exports.createSauce = (req, res, next) => {
     // Save the sauce //
     sauce.save()
     .then(() => {
-        res.status(201).json({
-            message: 'Post saved successfully!'
-        });
-    }).catch((error) => {
-        res.status(400).json({
-            error: error
-        });
+        res.status(201).json({ message: 'Post saved successfully!' });
+    })
+    .catch((error) => {
+        res.status(401).json({ error: error });
     });
 };
 
@@ -34,11 +31,10 @@ exports.createSauce = (req, res, next) => {
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-        res.status(200).json(sauce);
-    }).catch((error) => {
-        res.status(400).json({
-            error: error
-        });
+        res.status(201).json(sauce);
+    })
+    .catch((error) => {
+        res.status(401).json({ error: error });
     });
 };
 
@@ -54,13 +50,10 @@ exports.deleteSauce = (req, res, next) => {
             // Delete the sauce //
             Sauce.deleteOne({ _id: req.params.id })
             .then(() => {
-                res.status(200).json({
-                    message: 'Deleted!'
-                });
-            }).catch((error) => {
-                res.status(400).json({
-                    error: error
-                });
+                res.status(201).json({ message: 'Deleted!' });
+            })
+            .catch((error) => {
+                res.status(401).json({ error: error });
             });
         });
     });
@@ -101,13 +94,10 @@ exports.modifySauce = (req, res, next) => {
     // Update Sauce //
     Sauce.updateOne({ _id: req.params.id }, sauce)
     .then(() => {
-        res.status(201).json({
-            message: 'Sauce updated successfully!'
-        });
-    }).catch((error) => {
-        res.status(400).json({
-            error: error
-        });
+        res.status(201).json({ message: 'Sauce updated successfully!' });
+    })
+    .catch((error) => {
+        res.status(401).json({ error: error });
     });
 };
 
@@ -115,11 +105,10 @@ exports.modifySauce = (req, res, next) => {
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
     .then((sauces) => {
-        res.status(200).json(sauces);
-    }).catch((error) => {
-        res.status(400).json({
-            error: error
-        });
+        res.status(201).json(sauces);
+    })
+    .catch((error) => {
+        res.status(401).json({ error: error });
     });
 };
 
@@ -132,33 +121,33 @@ exports.likesOrDislikes = (req, res, next) => {
         // Action to be taken if a user likes a sauce //
         const updateLike = {
             // Increment the value of likes by 1 //
-            $inc: { likes: req.body.like },
+            $inc: { likes: 1 },
             // Push the userId into the usersLiked array //
             $push: { usersLiked: userId }
         };
         // Update the sauce //
         Sauce.updateOne({ _id: sauceId }, updateLike)
         .then(() => {
-            res.status(200).json({ message: 'Your like is greatly appreciated!'});
+            res.status(201).json({ message: 'Your like has been registered!'});
         })
         .catch((error) => {
-            res.status(500).json({ error: error});
+            res.status(401).json({ error: error});
         });
     } else if (req.body.like === -1) {
         // Action to be taken if user dislikes a sauce //
         const updatDislike = {
-            // Increment the value of dislikes by -1 //
-            $inc: { dislikes: req.body.like },
+            // Decrement the value of dislikes by 1 //
+            $inc: { dislikes: 1 },
             // Push the userId into the usersDisliked array //
             $push: { usersDisliked: userId }
         };
         // Update the sauce //
         Sauce.updateOne({ _id: sauceId }, updatDislike)
         .then(() => {
-            res.status(200).json({ message: 'You duna likea my sauce?'});
+            res.status(201).json({ message: 'Your dislike has been registered'});
         })
         .catch((error) => {
-            res.status(500).json({ error: error});
+            res.status(401).json({ error: error});
         });
     } else if (req.body.like === 0) {
         // Action to be taken if user changes thier mind //
@@ -169,8 +158,8 @@ exports.likesOrDislikes = (req, res, next) => {
             $pull: { usersLiked: userId }
         };
         const changeDislike = {
-            // Increments the value of dislikes by 1 //
-            $inc: { dislikes: +1 },
+            // Decrements the value of dislikes by 1 //
+            $inc: { dislikes: -1 },
             // Pull the userId from the array //
             $pull: { usersDisliked: userId }
         };
@@ -182,29 +171,29 @@ exports.likesOrDislikes = (req, res, next) => {
                 // Update the sauce //
                 Sauce.updateOne({ _id: sauceId }, changeLike)
                 .then(() => {
-                    res.status(200).json({ message: 'You like has been removed' });
+                    res.status(201).json({ message: 'You like has been removed' });
                 })
                 .catch((error) => {
-                    res.status(500).json({ error: error });
+                    res.status(401).json({ error: error });
                 });
                 // If the userId is included in the array the user can unclick their dislike //
             } else if (sauce.usersDisliked.includes(userId)) {
                 // Update the sauce //
                 Sauce.updateOne({ _id: sauceId }, changeDislike)
                 .then(() => {
-                    res.status(200).json({ message: 'Your dislike has been removed' });
+                    res.status(201).json({ message: 'Your dislike has been removed' });
                 })
                 .catch((error) => {
-                    res.status(500).json({ error: error });
+                    res.status(401).json({ error: error });
                 });
             } else {
-                res.status(400).json({ error: 'Invalid like value!' });
+                res.status(401).json({ error: 'Invalid like value!' });
             }
         })
         .catch((error) => {
-            res.status(500).json({ error: error });
+            res.status(401).json({ error: error });
         });
     } else {
-        res.status(400).json({ error: 'Invalid like value!' });
+        res.status(401).json({ error: 'Invalid like value!' });
     }
 };
