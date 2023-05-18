@@ -1,6 +1,4 @@
-
-//MONGODB PW: bC6a2n2mSy3NGYqv //
-//MONGODB CONNECTION: mongodb+srv://voislav21:<password>@cluster0.b6e5igi.mongodb.net/?retryWrites=true&w=majority //
+// Expess app //
 
 // Import express and mongoose //
 const express = require('express');
